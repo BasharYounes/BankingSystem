@@ -217,14 +217,27 @@ class BankController extends Controller
         $customer = Auth::user();
         $accounts = $this->bankService->getCustomerAccounts($customer);
 
-        $accountsData = [];
-        foreach ($accounts as $account) {
-            $accountsData[] = $account->display();
-        }
+        $accountsData = $accounts->map(function ($account) {
+            return [
+                'id' => $account->id,
+                'account_number' => $account->account_number,
+                'type' => $account->type,
+                'balance' => $account->balance,
+            ];
+        });
 
         return response()->json([
             'accounts' => $accountsData,
             'total_balance' => collect($accountsData)->sum('balance'),
         ]);
+    }
+
+    public function searchAccountsByAccountNumber(Request $request)
+    {
+        $accountNumber = $request->validate([
+            'account_number' => 'required|string|exists:accounts,account_number',
+        ]);
+        $accounts = AccountModel::where('account_number', 'like', "%{$accountNumber}%")->get();
+        return response()->json($accounts);
     }
 }

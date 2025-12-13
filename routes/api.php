@@ -1,33 +1,37 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BankController;
+use App\Http\Controllers\TicketController;
 use App\Models\User;
-use App\Models\AccountModel;
-use App\Models\Transaction;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
-
-
-    Route::post('/register', [App\Http\Controllers\AuthController::class, 'register']);
-    Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 
 
     Route::middleware('auth:sanctum')->prefix('user')->group(function () {
 
-            Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
+            Route::post('/logout', [AuthController::class, 'logout']);
 
-            Route::get('accounts-user', function (Request $request) {
-               return response()->json(['User Accounts' => auth()->user()->accounts()]);
-            });
+            Route::get('accounts-user', [BankController::class, 'getAccounts']);
+            Route::post('search-accounts', [BankController::class, 'searchAccountsByAccountNumber']);
 
-            Route::post('/open-account', [App\Http\Controllers\BankController::class, 'openAccount']);
-            Route::post('/deposit', [App\Http\Controllers\BankController::class, 'deposit']);
-            Route::post('/withdrawal', [App\Http\Controllers\BankController::class, 'withdrawal']);
-            Route::post('/transfer', [App\Http\Controllers\BankController::class, 'transfer']);
-            Route::post('/add-children', [App\Http\Controllers\BankController::class, 'addChildren']);
-            Route::post('/remove-children', [App\Http\Controllers\BankController::class, 'removeChildren']);
+            Route::post('/open-account', [BankController::class, 'openAccount']);
+            Route::post('/deposit', [BankController::class, 'deposit']);
+            Route::post('/withdrawal', [BankController::class, 'withdrawal']);
+            Route::post('/transfer', [BankController::class, 'transfer']);
+            Route::post('/add-children', [BankController::class, 'addChildren']);
+            Route::post('/remove-children', [BankController::class, 'removeChildren']);
             // Route::post('/buy-stocks', [App\Http\Controllers\BankController::class, 'buyStocks']);
-            Route::post('/sell-stocks', [App\Http\Controllers\BankController::class, 'sellStocks']);
+            Route::post('/sell-stocks', [BankController::class, 'sellStocks']);
+
+            Route::post('store-fcm-token', [AuthController::class, 'storeFCM_Token']);
+
+            Route::post('open-ticket', [TicketController::class, 'store']);
+            Route::post('add-message/{ticketId}', [TicketController::class, 'addMessage']);
+            Route::post('update-status/{ticketId}', [TicketController::class, 'updateStatus']);
         }
     );
 

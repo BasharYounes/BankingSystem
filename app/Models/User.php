@@ -163,4 +163,10 @@ class User extends Authenticatable
 
         return $prefix . '-' . date('Y') . '-' . str_pad($count, 6, '0', STR_PAD_LEFT);
     }
+
+    public function storeFCM_Token(string $fcm_token)
+    {
+        $this->update(['fcm_token' => $fcm_token]);
+        return true;
+    }
 }

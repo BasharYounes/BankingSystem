@@ -34,16 +34,32 @@ class DepositTransaction extends Transaction
             // تنفيذ الإيداع
             $accountStrategy->deposit();
 
+            $this->notify('deposit_made', [
+            'amount' => $this->amount,
+            'account_number' => $accountModel->account_number,
+            ]);
+
             Log::info('تم الإيداع بنجاح في الحساب رقم: ' . $accountModel->account_number);
             Log::info('Status'.$this->getStatus());
 
+            if ($accountStrategy->type === 'loan'){
+                $accountStrategy->update([
+                    'scheduled_for' => now()->addMonth(),
+                    'status' => self::STATUS_PENDING
+                ]);
+            }else{
             $this->setStatus(self::STATUS_COMPLETED);
             Log::info('اكتملت عملية الإيداع بنجاح');
             Log::info('Status'.$this->getStatus());
+            }
             return true;
 
         } catch (\Exception $e) {
             $this->setStatus(self::STATUS_FAILED);
+            $this->notify('deposit_failed', [
+                'amount' => $this->amount,
+                'account_number' => $accountModel->account_number,
+            ]);
             Log::error('فشل الإيداع: ' . $e->getMessage().'.'.$e->getLine().'.'.$e->getFile());
             return false;
         }

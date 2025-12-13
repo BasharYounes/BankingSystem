@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use App\Interfaces\Observer;
+use App\Interfaces\Subject;
 use Illuminate\Database\Eloquent\Model;
 
-class AccountModel extends Model
+class AccountModel extends Model implements Subject
 {
     protected $table = 'accounts';
+
+    protected static array $observers = [];
 
     protected $fillable = [
         'account_number',
@@ -81,5 +85,24 @@ class AccountModel extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class, 'account_id');
+    }
+    // ===========================
+    // ✅ نمط المراقب (Observer Pattern)
+    // ===========================
+    public function attach(Observer $observer): void
+    {
+        static::$observers[] = $observer;
+    }
+
+    public function detach(Observer $observer): void
+    {
+        static::$observers = array_filter(static::$observers, fn($obs) => $obs !== $observer);
+    }
+
+    public function notify(string $eventType, array $data): void
+    {
+        foreach (static::$observers as $observer) {
+            $observer->update($eventType, $this, $data);
+        }
     }
 }

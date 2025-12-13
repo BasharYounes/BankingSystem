@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\AccountModel;
+use App\Observers\EmailNotificationObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $email = new EmailNotificationObserver();
+
+        $accountModel = new AccountModel();
+        $accountModel->attach($email);
     }
 }

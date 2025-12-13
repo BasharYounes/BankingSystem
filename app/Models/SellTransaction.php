@@ -44,8 +44,22 @@ class SellTransaction extends Transaction
             $strategy->sellAsset($assertSymbol, $quantity, $this->amount);
             \Log::info('تم البيع بنجاح من الحساب رقم: ' . $fromModelAccount->account_number);
 
+            $this->notify('sell_asset_made', [
+                'amount' => $this->amount,
+                'account_number' => $fromModelAccount->account_number,
+                'asset_symbol' => $assertSymbol,
+                'quantity' => $quantity,
+            ]);
+
             $strategy->buyAsset($assertSymbol, $quantity, $this->metadata['price_per_unit'],$toModelAccount);
             \Log::info('تم الشراء بنجاح في الحساب رقم: ' . $toModelAccount->account_number);
+
+            $this->notify('buy_asset_made', [
+                'amount' => $this->amount,
+                'account_number' => $toModelAccount->account_number,
+                'asset_symbol' => $assertSymbol,
+                'quantity' => $quantity,
+            ]);
 
             $this->setStatus(self::STATUS_COMPLETED);
             \Log::info('اكتملت عملية البيع بنجاح');
@@ -54,6 +68,11 @@ class SellTransaction extends Transaction
 
         } catch (\Exception $e) {
             $this->setStatus(self::STATUS_FAILED);
+            $this->notify('sell_asset_failed', [
+                'amount' => $this->amount,
+                'from_account_number' => $fromModelAccount->account_number ?? null,
+                'to_account_number' => $toModelAccount->account_number ?? null,
+            ]);
             \Log::error('فشل البيع: ' . $e->getMessage());
             return false;
         }

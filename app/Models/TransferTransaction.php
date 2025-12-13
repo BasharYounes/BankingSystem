@@ -36,6 +36,15 @@ class TransferTransaction extends Transaction
             \Log::info('تم التحويل بنجاح من الحساب رقم: ' . $fromModelAccount->account_number . ' إلى الحساب رقم: ' . $toModelAccount->account_number);
             \Log::info('Status'.$this->getStatus());
 
+            if ($fromModelAccount->type !== 'loan' || $toModelAccount !== 'loan'){
+                    $this->notify('transfer_made', [
+                    'amount' => $this->amount,
+                    'from_account_number' => $fromModelAccount->account_number,
+                    'to_account_number' => $toModelAccount->account_number,
+                ]);
+            }
+
+
             $this->setStatus(self::STATUS_COMPLETED);
             \Log::info('اكتملت عملية التحويل بنجاح');
             \Log::info('Status'.$this->getStatus());
@@ -43,6 +52,11 @@ class TransferTransaction extends Transaction
 
         } catch (\Exception $e) {
             $this->setStatus(self::STATUS_FAILED);
+            $this->notify('transfer_failed', [
+                'amount' => $this->amount,
+                'from_account_number' => $fromModelAccount->account_number ?? null,
+                'to_account_number' => $toModelAccount->account_number ?? null,
+            ]);
             \Log::error('فشل التحويل: ' . $e->getMessage());
             return false;
         }

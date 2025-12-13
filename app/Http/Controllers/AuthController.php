@@ -68,4 +68,17 @@ class AuthController extends Controller
             'message' => 'تم تسجيل الخروج بنجاح',
         ]);
     }
+
+    public function storeFCM_Token(Request $request)
+    {
+        $request->validate([
+            'fcm_token' => 'required|string',
+        ]);
+
+       $storeFCM_Token = auth()->user()->storeFCM_Token($request->fcm_token) ? true : false;
+
+        return response()->json([
+            'result' => $storeFCM_Token
+        ]);
+    }
 }
