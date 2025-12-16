@@ -8,15 +8,17 @@ use App\Models\Account;
 use App\Services\BankService;
 use App\Strategies\CompositeAccountStrategy;
 use App\Rules\CompositeAccountRule;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
 class BankController extends Controller
 {
-
+    use AuthorizesRequests;
     public function __construct(protected BankService $bankService)
-    {}
+    {
+    }
 
     public function openAccount(Request $request)
     {
@@ -55,6 +57,8 @@ class BankController extends Controller
             return response()->json(['error' => 'الحساب غير موجود'], 404);
         }
 
+        $this->authorize('deposit', $account);
+
         $transaction = $user->requestDeposit(
             $account,
             $request->amount,
@@ -80,6 +84,8 @@ class BankController extends Controller
         if (!$account) {
             return response()->json(['error' => 'الحساب غير موجود'], 404);
         }
+
+        $this->authorize('withdraw', $account);
 
         $transaction = $user->requestWithdrawal(
             $account,
@@ -234,10 +240,10 @@ class BankController extends Controller
 
     public function searchAccountsByAccountNumber(Request $request)
     {
-        $accountNumber = $request->validate([
+        $request->validate([
             'account_number' => 'required|string|exists:accounts,account_number',
         ]);
-        $accounts = AccountModel::where('account_number', 'like', "%{$accountNumber}%")->get();
-        return response()->json($accounts);
+        $accounts = AccountModel::where('account_number', 'like', "%{$request->account_number}%")->get();
+        return response()->json([$accounts]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Transaction;
+use App\Services\Recommendations\RecommendationService;
 
 class TransactionProcessor
 {
@@ -41,11 +42,12 @@ class TransactionProcessor
                 ];
             }
 
-            // 2. تطبيق الاستراتيجية (حساب الرسوم)
             $this->strategy->process($transaction);
 
-            // 3. تنفيذ المعاملة
             $result = $transaction->execute();
+
+            app(RecommendationService::class)
+            ->generate($transaction->account);
 
             if ($result) {
                 return [

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\TicketController;
@@ -9,6 +10,9 @@ use Illuminate\Support\Facades\Route;
 
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+
+    Route::post('/register-admin', [AdminController::class, 'register']);
+    Route::post('/login-admin', [AdminController::class, 'login']);
 
 
     Route::middleware('auth:sanctum')->prefix('user')->group(function () {
@@ -34,6 +38,12 @@ use Illuminate\Support\Facades\Route;
             Route::post('update-status/{ticketId}', [TicketController::class, 'updateStatus']);
         }
     );
+
+
+    Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
+        Route::post('/logout', [AdminController::class, 'logout']);
+        Route::get('users', [AdminController::class, 'getUsers']);
+    });
 
 
 

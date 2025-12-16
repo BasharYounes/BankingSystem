@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Ticket_Message extends Model
+class TicketMessage extends Model
 {
     protected $fillable = ['ticket_id', 'sender_id', 'message', 'sender_type'];
 

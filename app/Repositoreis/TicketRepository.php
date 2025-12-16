@@ -4,12 +4,13 @@ namespace App\Repositoreis;
 
 use App\Interfaces\TicketRepositoryInterface;
 use App\Models\Ticket;
-use App\Models\Ticket_Message;
+use App\Models\TicketMessage;
 
 class TicketRepository implements TicketRepositoryInterface
 {
     public function create(array $data): Ticket
     {
+        $data['user_id'] = auth()->id();
         return Ticket::create($data);
     }
 
@@ -18,7 +19,7 @@ class TicketRepository implements TicketRepositoryInterface
         return Ticket::findOrFail($id);
     }
 
-    public function addMessage(int $ticketId, array $data): Ticket_Message
+    public function addMessage(int $ticketId, array $data): TicketMessage
     {
         $ticket = Ticket::findOrFail($ticketId);
         return $ticket->messages()->create($data);

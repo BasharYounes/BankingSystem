@@ -20,6 +20,6 @@ class Ticket extends Model
     }
 
     public function messages() {
-        return $this->hasMany(Ticket_Message::class);
+        return $this->hasMany(TicketMessage::class);
     }
 }

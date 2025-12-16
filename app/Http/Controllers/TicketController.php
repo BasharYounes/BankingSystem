@@ -11,6 +11,11 @@ class TicketController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'title' => 'required|string',
+            'category' => 'sometimes|string',
+            'account_id' => 'required|exists:accounts,id',
+        ]);
         $ticket = $this->service->openTicket($request->all());
         return response()->json($ticket, 201);
     }
