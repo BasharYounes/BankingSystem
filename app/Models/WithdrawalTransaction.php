@@ -36,7 +36,7 @@ class WithdrawalTransaction extends Transaction
             \Log::info('تم السحب بنجاح من الحساب رقم: ' . $accountModel->account_number);
             \Log::info('Status'.$this->getStatus());
 
-            $this->notify('withdrawal_made', [
+            $accountModel->notify('withdrawal_made', [
                 'amount' => $this->amount,
                 'account_number' => $accountModel->account_number,
                 'total_balance' => $accountModel->balance,
@@ -49,7 +49,7 @@ class WithdrawalTransaction extends Transaction
 
         } catch (\Exception $e) {
             $this->setStatus(self::STATUS_FAILED);
-            $this->notify('withdrawal_failed', [
+            $accountModel->notify('withdrawal_failed', [
                 'amount' => $this->amount,
                 'account_number' => $accountModel->account_number,
             ]);

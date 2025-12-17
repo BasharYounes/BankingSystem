@@ -15,6 +15,7 @@ class DepositTransaction extends Transaction
 
     public function execute(): bool
     {
+        $accountModel = null;
         try {
             $this->setStatus(self::STATUS_PROCESSING);
             Log::info('بدء تنفيذ عملية الإيداع');
@@ -34,7 +35,7 @@ class DepositTransaction extends Transaction
             // تنفيذ الإيداع
             $accountStrategy->deposit();
 
-            $this->notify('deposit_made', [
+            $accountModel->notify('deposit_made', [
             'amount' => $this->amount,
             'account_number' => $accountModel->account_number,
             ]);
@@ -42,24 +43,25 @@ class DepositTransaction extends Transaction
             Log::info('تم الإيداع بنجاح في الحساب رقم: ' . $accountModel->account_number);
             Log::info('Status'.$this->getStatus());
 
-            if ($accountStrategy->type === 'loan'){
-                $accountStrategy->update([
-                    'scheduled_for' => now()->addMonth(),
-                    'status' => self::STATUS_PENDING
-                ]);
-            }else{
-            $this->setStatus(self::STATUS_COMPLETED);
-            Log::info('اكتملت عملية الإيداع بنجاح');
-            Log::info('Status'.$this->getStatus());
+            if ($accountModel->type === 'loan') {
+                $this->scheduled_for = now()->addMonth();
+                $this->status = self::STATUS_PENDING;
+                $this->save();
+            } else {
+                $this->setStatus(self::STATUS_COMPLETED);
+                Log::info('اكتملت عملية الإيداع بنجاح');
+                Log::info('Status'.$this->getStatus());
             }
             return true;
 
         } catch (\Exception $e) {
             $this->setStatus(self::STATUS_FAILED);
-            $this->notify('deposit_failed', [
-                'amount' => $this->amount,
-                'account_number' => $accountModel->account_number,
-            ]);
+            if ($accountModel) {
+                $accountModel->notify('deposit_failed', [
+                    'amount' => $this->amount,
+                    'account_number' => $accountModel->account_number,
+                ]);
+            }
             Log::error('فشل الإيداع: ' . $e->getMessage().'.'.$e->getLine().'.'.$e->getFile());
             return false;
         }

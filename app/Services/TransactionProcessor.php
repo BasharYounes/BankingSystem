@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AccountModel;
 use App\Models\Transaction;
 use App\Services\Recommendations\RecommendationService;
 
@@ -46,8 +47,15 @@ class TransactionProcessor
 
             $result = $transaction->execute();
 
-            app(RecommendationService::class)
-            ->generate($transaction->account);
+            // معالجة آمنة للتوصيات
+            try {
+                $account = AccountModel::find($transaction->from_account_id);
+                if ($account) {
+                    app(RecommendationService::class)->generate($account);
+                }
+            } catch (\Exception $e) {
+                \Log::warning('تحذير في إنشاء التوصيات: ' . $e->getMessage());
+            }
 
             if ($result) {
                 return [
@@ -77,4 +85,6 @@ class TransactionProcessor
     {
         $this->strategy = $strategy;
     }
+
+
 }

@@ -92,7 +92,7 @@ class BankController extends Controller
             $request->amount,
             $request->description ?? 'إيداع نقدي'
         );
-        $result = $this->bankService->processTransaction($transaction)?true:false;
+        $result = $this->bankService->processTransaction($transaction);
 
         return response()->json([
             'result'=>$result,
@@ -107,7 +107,7 @@ class BankController extends Controller
     {
         $request->validate([
             'from_account' => 'required|exists:accounts,id',
-            'number_account' => 'required|exists:accounts,number_account',
+            'number_account' => 'required|exists:accounts,account_number',
             'amount' => 'required|numeric|min:0.01',
             'description' => 'nullable|string',
         ]);
@@ -115,7 +115,7 @@ class BankController extends Controller
         $user = Auth::user();
 
         $fromAccount = AccountModel::where('id', $request->from_account)->firstOrFail();
-        $toAccount = AccountModel::where('number_account', $request->number_account)->firstOrFail();
+        $toAccount = AccountModel::where('account_number', $request->number_account)->firstOrFail();
 
         if (!$fromAccount || !$toAccount) {
             return response()->json(['error' => 'الحساب غير موجود'], 404);
@@ -128,10 +128,10 @@ class BankController extends Controller
             $request->description ?? "تحويل من الحساب {$fromAccount->account_number} إلى الحساب {$toAccount->account_number}"
         );
 
-        $result = $this->bankService->processTransaction($transaction)?true:false;
+        $result = $this->bankService->processTransaction($transaction);
 
         return response()->json([
-            'result'=>$result,
+            'result'=> $result,
             'data' => [
                 'from_account_balance' => $fromAccount->balance,
                 'to_account_balance' => $toAccount->balance,

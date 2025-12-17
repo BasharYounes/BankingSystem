@@ -15,20 +15,23 @@ class TransferTransaction extends Transaction
 
     public function execute(): bool
     {
+        $fromModelAccount = null;
+        $toModelAccount = null;
+        
         try {
             $this->setStatus(self::STATUS_PROCESSING);
             \Log::info('بدء تنفيذ عملية التحويل');
             \Log::info('Status'.$this->getStatus());
 
             if (!$this->validate()) {
-                throw new \Exception('فشل التحقق من صحة المعاملة');
+               throw new \Exception('فشل التحقق من صحة المعاملة');
             }
 
             $fromModelAccount = AccountModel::find($this->from_account_id);
             $toModelAccount = AccountModel::find($this->to_account_id);
 
             if (!$fromModelAccount || !$toModelAccount) {
-                throw new \Exception('الحساب غير موجود');
+               throw new \Exception('الحساب غير موجود');
             }
             $strategy = StrategyFactory::getInstance()->createStrategy($fromModelAccount, $this->amount);
             // تنفيذ التحويل
@@ -36,8 +39,8 @@ class TransferTransaction extends Transaction
             \Log::info('تم التحويل بنجاح من الحساب رقم: ' . $fromModelAccount->account_number . ' إلى الحساب رقم: ' . $toModelAccount->account_number);
             \Log::info('Status'.$this->getStatus());
 
-            if ($fromModelAccount->type !== 'loan' || $toModelAccount !== 'loan'){
-                    $this->notify('transfer_made', [
+            if ($fromModelAccount->type !== 'loan' || $toModelAccount->type !== 'loan'){
+                $fromModelAccount->notify('transfer_made', [
                     'amount' => $this->amount,
                     'from_account_number' => $fromModelAccount->account_number,
                     'to_account_number' => $toModelAccount->account_number,
@@ -52,11 +55,13 @@ class TransferTransaction extends Transaction
 
         } catch (\Exception $e) {
             $this->setStatus(self::STATUS_FAILED);
-            $this->notify('transfer_failed', [
-                'amount' => $this->amount,
-                'from_account_number' => $fromModelAccount->account_number ?? null,
-                'to_account_number' => $toModelAccount->account_number ?? null,
-            ]);
+            if ($fromModelAccount) {
+                $fromModelAccount->notify('transfer_failed', [
+                    'amount' => $this->amount,
+                    'from_account_number' => $fromModelAccount->account_number ?? null,
+                    'to_account_number' => $toModelAccount->account_number ?? null,
+                ]);
+            }
             \Log::error('فشل التحويل: ' . $e->getMessage());
             return false;
         }

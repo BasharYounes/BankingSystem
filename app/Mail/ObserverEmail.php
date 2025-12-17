@@ -30,7 +30,8 @@ class ObserverEmail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.observer')
-                    ->with('data', $this->data);
+        return $this->subject('تنبيه: تحديث على حسابك')
+            ->view('emails.observer')
+            ->with('data', $this->data);
     }
 }

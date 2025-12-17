@@ -44,33 +44,45 @@ class RecommendationService
 
     public function generate(AccountModel $account)
     {
-        $profile = $this->analyzer->analyze($account);
+        try {
+            $profile = $this->analyzer->analyze($account);
 
-        $recommendation = $this->factory->create($profile);
+            $recommendation = $this->factory->create($profile);
 
-        // === Decorator Pipeline ===
-        $recommendation = new PersonalToneDecorator($recommendation);
+            $recommendation = new PersonalToneDecorator($recommendation);
 
-        if ($profile->monthlyWithdrawals > 5) {
-            $recommendation = new BehaviorInsightDecorator($recommendation);
+            if ($profile->monthlyWithdrawals > 5) {
+                $recommendation = new BehaviorInsightDecorator($recommendation);
 
-            $this->notify('recommendation.generated', [
-            'account' => $account,
-            'recommendation' => $recommendation,
-        ]);
+                $this->notifyObservers('recommendation.generated', [
+                    'account' => $account,
+                    'recommendation' => $recommendation,
+                ]);
+            }
+
+            if ($profile->riskLevel === 'high') {
+                $recommendation = new RiskLevelDecorator($recommendation);
+                $recommendation = new PriorityDecorator($recommendation);
+
+                $this->notifyObservers('recommendation.generated', [
+                    'account' => $account,
+                    'recommendation' => $recommendation,
+                ]);
+            }
+
+            return $recommendation;
+        } catch (\Exception $e) {
+            \Log::error('خطأ في إنشاء التوصيات: ' . $e->getMessage());
+            return null;
         }
+    }
 
-        if ($profile->riskLevel === 'high') {
-            $recommendation = new RiskLevelDecorator($recommendation);
-            $recommendation = new PriorityDecorator($recommendation);
-            
-            $this->notify('recommendation.generated', [
-            'account' => $account,
-            'recommendation' => $recommendation,
-        ]);
+    protected function notifyObservers(string $eventType, array $data): void
+    {
+        try {
+            $this->notify($eventType, $data);
+        } catch (\Exception $e) {
+            \Log::warning('خطأ في إخطار المراقبين: ' . $e->getMessage());
         }
-
-
-        return $recommendation;
     }
 }

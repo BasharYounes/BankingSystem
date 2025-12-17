@@ -33,12 +33,12 @@ class EmailNotificationObserver implements Observer
             $accountTo = AccountModel::where('account_number',$data['to_account_number'])->firstOrFail();
 
             event(new EmailObserver(
-                $accountTo->first()->user,
+                $accountTo->user,
                 $dataEmail
             ));
 
             event( new GenericNotificationEvent(
-                $accountTo->first()->user,
+                $accountTo->user,
                 $eventType,
                 $data
             ));

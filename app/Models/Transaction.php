@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Interfaces\Account;
 use Illuminate\Database\Eloquent\Model;
 
-abstract class Transaction extends Model
+abstract class Transaction extends TransactionRecord
 {
     protected $table = 'transactions';
 
