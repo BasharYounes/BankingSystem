@@ -107,7 +107,7 @@ class BankController extends Controller
     {
         $request->validate([
             'from_account' => 'required|exists:accounts,id',
-            'to_account' => 'required|exists:accounts,id',
+            'number_account' => 'required|exists:accounts,number_account',
             'amount' => 'required|numeric|min:0.01',
             'description' => 'nullable|string',
         ]);
@@ -115,7 +115,7 @@ class BankController extends Controller
         $user = Auth::user();
 
         $fromAccount = AccountModel::where('id', $request->from_account)->firstOrFail();
-        $toAccount = AccountModel::where('id', $request->to_account)->firstOrFail();
+        $toAccount = AccountModel::where('number_account', $request->number_account)->firstOrFail();
 
         if (!$fromAccount || !$toAccount) {
             return response()->json(['error' => 'الحساب غير موجود'], 404);
