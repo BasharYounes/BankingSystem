@@ -5,9 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\TransactionProcessor;
 
 class AdminController extends Controller
 {
+
+    protected $transactionProcessor;
+
+    public function __construct(TransactionProcessor $transactionProcessor)
+    {
+        $this->transactionProcessor = $transactionProcessor;
+    }
+
     public function register(Request $request)
     {
         $request->validate([
@@ -62,4 +71,22 @@ class AdminController extends Controller
         $users = User::all();
         return response()->json($users);
     }
+
+    public function getDailyTransactions()
+    {
+         $transactions = $this->transactionProcessor->getDailyTransactions();
+         return response()->json($transactions);
+    
+    }
+
+    public function downloadDailyReport()
+{
+    $url = $this->transactionProcessor->generateDailyReports([]);
+
+    return response()->json([
+        'pdf_url' => $url
+    ]);
 }
+
+ }
+    

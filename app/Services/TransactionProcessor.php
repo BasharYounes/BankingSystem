@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Models\AccountModel;
 use App\Models\Transaction;
+use App\Models\TransactionRecord;
 use App\Services\Recommendations\RecommendationService;
+use Mpdf\Mpdf;
 
 class TransactionProcessor
 {
@@ -86,5 +88,36 @@ class TransactionProcessor
         $this->strategy = $strategy;
     }
 
+    public function getDailyTransactions()
+{
+    $today = now()->format('Y-m-d');
+
+   $transactions = TransactionRecord::with(['account', 'fromAccount', 'toAccount', 'customer', 'approver'])
+    ->whereDate('executed_at', $today)
+    ->orderBy('executed_at', 'asc')
+    ->get();
+
+    return $transactions;
+}
+
+    public function generateDailyReports(array $data)
+    {
+        $transactions = $this->getDailyTransactions();
+        $date = now()->format('Y-m-d');
+        $html = view('Reports.daily_transactions_pdf', [
+            'transactions' => $transactions,
+            'date' => $date
+        ])->render();
+
+        $mpdf = new Mpdf(['default_font' => 'dejavusans']);
+        $mpdf->WriteHTML($html);
+
+        $fileName = "daily_transactions_{$date}.pdf";
+        //$filePath = url("storage/reports/{$fileName}");
+        $url = asset('storage/reports/' . $fileName);
+        $mpdf->Output(storage_path('app/public/reports/' . $fileName), 'F');
+
+        return $url;
+    }
 
 }
