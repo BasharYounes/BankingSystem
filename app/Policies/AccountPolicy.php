@@ -38,4 +38,54 @@ class AccountPolicy
             'admin'    => false,
         };
     }
+
+    public function addAccount(User $user): bool
+    {
+        return match ($user->role) {
+            'admin' => true,
+            'manager' => false,
+            'teller' => false,
+            'customer' => false,
+        };
+    }
+
+    public function getTicket(User $user): bool
+    {
+        return match ($user->role) {
+            'admin' => false,
+            'manager' => true,
+            'teller' => false,
+            'customer' => false,
+        };
+    }
+
+    public function openTicket(User $user): bool
+    {
+        return match ($user->role) {
+            'admin' => false,
+            'manager' => true,
+            'teller' => false,
+            'customer' => false,
+        };
+    }
+
+    public function changeStatusTicket(User $user): bool
+    {
+        return match ($user->role) {
+            'admin' => false,
+            'manager' => true,
+            'teller' => false,
+            'customer' => false,
+        };
+    }
+
+    public function frozenAccount(User $user): bool
+    {
+        return match ($user->role) {
+            'admin' => false,
+            'manager' => true,
+            'teller' => false,
+            'customer' => false,
+        };
+    }
 }

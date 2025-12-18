@@ -26,6 +26,8 @@ return new class extends Migration
 
             $table->enum('sender_type', ['customer', 'support_agent'])->default('customer');
 
+            $table->boolean('is_read')->default(false);
+
             $table->timestamps();
         });
 

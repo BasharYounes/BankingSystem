@@ -23,8 +23,7 @@ use Illuminate\Support\Facades\Route;
             Route::post('search-accounts', [BankController::class, 'searchAccountsByAccountNumber']);
 
             Route::post('/open-account', [BankController::class, 'openAccount']);
-            Route::post('/deposit', [BankController::class, 'deposit']);
-            Route::post('/withdrawal', [BankController::class, 'withdrawal']);
+
             Route::post('/transfer', [BankController::class, 'transfer']);
             Route::post('/add-children', [BankController::class, 'addChildren']);
             Route::post('/remove-children', [BankController::class, 'removeChildren']);
@@ -39,15 +38,31 @@ use Illuminate\Support\Facades\Route;
         }
     );
 
+    Route::middleware('auth:sanctum')->prefix('teller')->group(function () {
+        Route::post('/logout', [AdminController::class, 'logout']);
+        Route::post('/deposit', [BankController::class, 'deposit']);
+        Route::post('/withdrawal', [BankController::class, 'withdrawal']);
+    });
 
-    Route::middleware('auth:sanctum')->prefix('admin')->group(function () 
+
+    Route::middleware('auth:sanctum')->prefix('admin')->group(function ()
     {
         Route::post('/logout', [AdminController::class, 'logout']);
         Route::get('users', [AdminController::class, 'getUsers']);
-        Route::get('daily/transactions', [AdminController::class, 'getDailyTransactions']);
-        Route::get('dailyReport/Pdf', [AdminController::class, 'downloadDailyReport']);
-        Route::get('dailyReport/Excel', [AdminController::class, 'downloadDailyReportExcel']);
-    
+        Route::post('add-account', [AdminController::class, 'addAccount']);
+
+    });
+
+    Route::middleware('auth:sanctum')->prefix('manager')->group(function () {
+        Route::post('/logout', [AdminController::class, 'logout']);
+        Route::get('all-tickets',[AdminController::class, 'getTicket']);
+        Route::post('open-ticket/{id}',[AdminController::class, 'openTicket']);
+        Route::post('change-status-ticket/{id}',[AdminController::class, 'changeStatusTicket']);
+        Route::post('frozen-account/{id}',[AdminController::class, 'frozenAccount']);
+        Route::get('download-daily-report-excel', [AdminController::class, 'downloadDailyReportExcel']);
+        Route::get('download-daily-report-pdf', [AdminController::class, 'downloadDailyReportPdf']);
+        Route::get('get-daily-transaction', [AdminController::class, 'getDailyTransaction']);
+
     });
 
 
