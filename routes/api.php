@@ -40,9 +40,13 @@ use Illuminate\Support\Facades\Route;
     );
 
 
-    Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
+    Route::middleware('auth:sanctum')->prefix('admin')->group(function () 
+    {
         Route::post('/logout', [AdminController::class, 'logout']);
         Route::get('users', [AdminController::class, 'getUsers']);
+        Route::get('daily/transactions', [AdminController::class, 'getDailyTransactions']);
+        Route::get('dailyReport/Pdf', [AdminController::class, 'downloadDailyReport']);
+        Route::get('dailyReport/Excel', [AdminController::class, 'downloadDailyReportExcel']);
     });
 
 

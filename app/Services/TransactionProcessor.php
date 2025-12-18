@@ -2,24 +2,31 @@
 
 namespace App\Services;
 
+use App\Exports\DailyTransactionsExport;
 use App\Models\AccountModel;
 use App\Models\Transaction;
+use App\Models\TransactionRecord;
 use App\Services\Recommendations\RecommendationService;
+use Maatwebsite\Excel\Excel;
+use Mpdf\Mpdf;
 
 class TransactionProcessor
 {
     private TransactionStrategy $strategy;
     private TransactionHandler $handlerChain;
+    protected Excel $excel;
 
-    public function __construct()
+    public function __construct(Excel $excel)
     {
         // الاستراتيجية الافتراضية
         $this->strategy = new StandardTransactionStrategy();
 
         // بناء سلسلة المسؤولية
         $this->buildHandlerChain();
+        $this->excel = $excel;
     }
 
+    
     private function buildHandlerChain(): void
     {
         $validationHandler = new ValidationHandler();
@@ -86,5 +93,29 @@ class TransactionProcessor
         $this->strategy = $strategy;
     }
 
+    public function getDailyTransactions()
+{
+    $today = now()->format('Y-m-d');
 
+   $transactions = TransactionRecord::with(['account', 'fromAccount', 'toAccount', 'customer', 'approver'])
+    ->whereDate('executed_at', $today)
+    ->orderBy('executed_at', 'asc')
+    ->get();
+
+    return $transactions;
+}
+
+      public function generateDailyTransactionsExcel()
+    {
+        $transactions = $this->getDailyTransactions();
+        $date = now()->format('Y-m-d');
+
+        $fileName = "daily_transactions_{$date}.xlsx";
+        $path = "public/reports/{$fileName}";
+
+        // استخدمي الكائن بدل الاستاتيك
+        $this->excel->store(new DailyTransactionsExport($transactions), $path);
+
+        return asset('storage/reports/' . $fileName);
+    }
 }
