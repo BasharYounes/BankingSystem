@@ -2,26 +2,31 @@
 
 namespace App\Services;
 
+use App\Exports\DailyTransactionsExport;
 use App\Models\AccountModel;
 use App\Models\Transaction;
 use App\Models\TransactionRecord;
 use App\Services\Recommendations\RecommendationService;
+use Maatwebsite\Excel\Excel;
 use Mpdf\Mpdf;
 
 class TransactionProcessor
 {
     private TransactionStrategy $strategy;
     private TransactionHandler $handlerChain;
+    protected Excel $excel;
 
-    public function __construct()
+    public function __construct(Excel $excel)
     {
         // الاستراتيجية الافتراضية
         $this->strategy = new StandardTransactionStrategy();
 
         // بناء سلسلة المسؤولية
         $this->buildHandlerChain();
+        $this->excel = $excel;
     }
 
+    
     private function buildHandlerChain(): void
     {
         $validationHandler = new ValidationHandler();
@@ -100,24 +105,17 @@ class TransactionProcessor
     return $transactions;
 }
 
-    public function generateDailyReports(array $data)
+      public function generateDailyTransactionsExcel()
     {
         $transactions = $this->getDailyTransactions();
         $date = now()->format('Y-m-d');
-        $html = view('Reports.daily_transactions_pdf', [
-            'transactions' => $transactions,
-            'date' => $date
-        ])->render();
 
-        $mpdf = new Mpdf(['default_font' => 'dejavusans']);
-        $mpdf->WriteHTML($html);
+        $fileName = "daily_transactions_{$date}.xlsx";
+        $path = "public/reports/{$fileName}";
 
-        $fileName = "daily_transactions_{$date}.pdf";
-        //$filePath = url("storage/reports/{$fileName}");
-        $url = asset('storage/reports/' . $fileName);
-        $mpdf->Output(storage_path('app/public/reports/' . $fileName), 'F');
+        // استخدمي الكائن بدل الاستاتيك
+        $this->excel->store(new DailyTransactionsExport($transactions), $path);
 
-        return $url;
+        return asset('storage/reports/' . $fileName);
     }
-
 }

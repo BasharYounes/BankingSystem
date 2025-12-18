@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\TransactionProcessor;
+use Maatwebsite\Excel\Excel; 
+use App\Exports\DailyTransactionsExport;
 
 class AdminController extends Controller
 {
@@ -81,12 +83,20 @@ class AdminController extends Controller
 
     public function downloadDailyReport()
 {
-    $url = $this->transactionProcessor->generateDailyReports([]);
+    $url = $this->transactionProcessor->getDailyTransactions();
 
     return response()->json([
         'pdf_url' => $url
     ]);
 }
 
- }
+public function downloadDailyReportExcel()
+{
+    $url = $this->transactionProcessor->generateDailyTransactionsExcel();
+
+    return response()->json([
+        'excel_url' => $url
+    ]);
+}
+}
     
