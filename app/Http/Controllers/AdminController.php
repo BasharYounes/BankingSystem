@@ -83,7 +83,7 @@ class AdminController extends Controller
 
     public function downloadDailyReport()
 {
-    $url = $this->transactionProcessor->getDailyTransactions();
+    $url = $this->transactionProcessor->generateDailyTransactionsPdf();
 
     return response()->json([
         'pdf_url' => $url
