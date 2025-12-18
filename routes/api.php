@@ -59,6 +59,9 @@ use Illuminate\Support\Facades\Route;
         Route::post('open-ticket/{id}',[AdminController::class, 'openTicket']);
         Route::post('change-status-ticket/{id}',[AdminController::class, 'changeStatusTicket']);
         Route::post('frozen-account/{id}',[AdminController::class, 'frozenAccount']);
+        Route::get('download-daily-report-excel', [AdminController::class, 'downloadDailyReportExcel']);
+        Route::get('download-daily-report-pdf', [AdminController::class, 'downloadDailyReportPdf']);
+        Route::get('get-daily-transaction', [AdminController::class, 'getDailyTransaction']);
 
     });
 

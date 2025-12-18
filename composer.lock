@@ -4,11 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-<<<<<<< Updated upstream
-    "content-hash": "781a812dee2ad3fce78827c8600246b9",
-=======
-    "content-hash": "af9d50d4b981137f350363ba1434ab1f",
->>>>>>> Stashed changes
+    "content-hash": "15d7f601a387429464f39663eeb1fd8b",
     "packages": [
         {
             "name": "beste/clock",
@@ -342,7 +338,6 @@
             "time": "2024-02-09T16:56:22+00:00"
         },
         {
-<<<<<<< Updated upstream
             "name": "composer/pcre",
             "version": "3.3.2",
             "source": {
@@ -381,46 +376,6 @@
             "autoload": {
                 "psr-4": {
                     "Composer\\Pcre\\": "src"
-=======
-            "name": "cuyz/valinor",
-            "version": "2.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "212835b2efb89becd9881f4836e9b0b32ea105bf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/212835b2efb89becd9881f4836e9b0b32ea105bf",
-                "reference": "212835b2efb89becd9881f4836e9b0b32ea105bf",
-                "shasum": ""
-            },
-            "require": {
-                "composer-runtime-api": "^2.0",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
-            },
-            "conflict": {
-                "phpstan/phpstan": "<1.0 || >= 3.0",
-                "vimeo/psalm": "<5.0 || >=7.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.4",
-                "infection/infection": "^0.31",
-                "marcocesarato/php-conventional-changelog": "^1.12",
-                "mikey179/vfsstream": "^1.6.10",
-                "phpbench/phpbench": "^1.3",
-                "phpstan/phpstan": "^2.0",
-                "phpstan/phpstan-phpunit": "^2.0",
-                "phpstan/phpstan-strict-rules": "^2.0",
-                "phpunit/phpunit": "^10.5",
-                "rector/rector": "^2.0",
-                "vimeo/psalm": "^6.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "CuyZ\\Valinor\\": "src"
->>>>>>> Stashed changes
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -429,7 +384,6 @@
             ],
             "authors": [
                 {
-<<<<<<< Updated upstream
                     "name": "Jordi Boggiano",
                     "email": "j.boggiano@seld.be",
                     "homepage": "http://seld.be"
@@ -538,7 +492,54 @@
                 }
             ],
             "time": "2025-08-20T19:15:30+00:00"
-=======
+        },
+        {
+            "name": "cuyz/valinor",
+            "version": "2.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CuyZ/Valinor.git",
+                "reference": "212835b2efb89becd9881f4836e9b0b32ea105bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/212835b2efb89becd9881f4836e9b0b32ea105bf",
+                "reference": "212835b2efb89becd9881f4836e9b0b32ea105bf",
+                "shasum": ""
+            },
+            "require": {
+                "composer-runtime-api": "^2.0",
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
+            },
+            "conflict": {
+                "phpstan/phpstan": "<1.0 || >= 3.0",
+                "vimeo/psalm": "<5.0 || >=7.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.4",
+                "infection/infection": "^0.31",
+                "marcocesarato/php-conventional-changelog": "^1.12",
+                "mikey179/vfsstream": "^1.6.10",
+                "phpbench/phpbench": "^1.3",
+                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpstan/phpstan-strict-rules": "^2.0",
+                "phpunit/phpunit": "^10.5",
+                "rector/rector": "^2.0",
+                "vimeo/psalm": "^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CuyZ\\Valinor\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
                     "name": "Romain Canon",
                     "email": "romain.hydrocanon@gmail.com",
                     "homepage": "https://github.com/romm"
@@ -568,7 +569,6 @@
                 }
             ],
             "time": "2025-10-21T12:16:56+00:00"
->>>>>>> Stashed changes
         },
         {
             "name": "dflydev/dot-access-data",
@@ -944,7 +944,6 @@
             "time": "2025-03-06T22:45:56+00:00"
         },
         {
-<<<<<<< Updated upstream
             "name": "ezyang/htmlpurifier",
             "version": "v4.19.0",
             "source": {
@@ -1004,7 +1003,8 @@
                 "source": "https://github.com/ezyang/htmlpurifier/tree/v4.19.0"
             },
             "time": "2025-10-17T16:34:55+00:00"
-=======
+        },
+        {
             "name": "fig/http-message-util",
             "version": "1.1.5",
             "source": {
@@ -1122,7 +1122,6 @@
                 "source": "https://github.com/firebase/php-jwt/tree/v6.11.1"
             },
             "time": "2025-04-09T20:32:01+00:00"
->>>>>>> Stashed changes
         },
         {
             "name": "fruitcake/php-cors",
@@ -3867,7 +3866,6 @@
             "time": "2025-03-24T10:02:05+00:00"
         },
         {
-<<<<<<< Updated upstream
             "name": "mpdf/mpdf",
             "version": "v8.2.7",
             "source": {
@@ -3912,49 +3910,10 @@
                 ],
                 "psr-4": {
                     "Mpdf\\": "src/"
-=======
-            "name": "mtdowling/jmespath.php",
-            "version": "2.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/jmespath/jmespath.php.git",
-                "reference": "a2a865e05d5f420b50cc2f85bb78d565db12a6bc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/jmespath/jmespath.php/zipball/a2a865e05d5f420b50cc2f85bb78d565db12a6bc",
-                "reference": "a2a865e05d5f420b50cc2f85bb78d565db12a6bc",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2.5 || ^8.0",
-                "symfony/polyfill-mbstring": "^1.17"
-            },
-            "require-dev": {
-                "composer/xdebug-handler": "^3.0.3",
-                "phpunit/phpunit": "^8.5.33"
-            },
-            "bin": [
-                "bin/jp.php"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.8-dev"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/JmesPath.php"
-                ],
-                "psr-4": {
-                    "JmesPath\\": "src/"
->>>>>>> Stashed changes
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-<<<<<<< Updated upstream
                 "GPL-2.0-only"
             ],
             "authors": [
@@ -4080,6 +4039,72 @@
             "time": "2023-05-03T06:19:36+00:00"
         },
         {
+            "name": "mtdowling/jmespath.php",
+            "version": "2.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jmespath/jmespath.php.git",
+                "reference": "a2a865e05d5f420b50cc2f85bb78d565db12a6bc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jmespath/jmespath.php/zipball/a2a865e05d5f420b50cc2f85bb78d565db12a6bc",
+                "reference": "a2a865e05d5f420b50cc2f85bb78d565db12a6bc",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2.5 || ^8.0",
+                "symfony/polyfill-mbstring": "^1.17"
+            },
+            "require-dev": {
+                "composer/xdebug-handler": "^3.0.3",
+                "phpunit/phpunit": "^8.5.33"
+            },
+            "bin": [
+                "bin/jp.php"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.8-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/JmesPath.php"
+                ],
+                "psr-4": {
+                    "JmesPath\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Graham Campbell",
+                    "email": "hello@gjcampbell.co.uk",
+                    "homepage": "https://github.com/GrahamCampbell"
+                },
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Declaratively specify how to extract elements from a JSON document",
+            "keywords": [
+                "json",
+                "jsonpath"
+            ],
+            "support": {
+                "issues": "https://github.com/jmespath/jmespath.php/issues",
+                "source": "https://github.com/jmespath/jmespath.php/tree/2.8.0"
+            },
+            "time": "2024-09-04T18:46:31+00:00"
+        },
+        {
             "name": "myclabs/deep-copy",
             "version": "1.13.4",
             "source": {
@@ -4138,32 +4163,6 @@
                 }
             ],
             "time": "2025-08-01T08:46:24+00:00"
-=======
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Graham Campbell",
-                    "email": "hello@gjcampbell.co.uk",
-                    "homepage": "https://github.com/GrahamCampbell"
-                },
-                {
-                    "name": "Michael Dowling",
-                    "email": "mtdowling@gmail.com",
-                    "homepage": "https://github.com/mtdowling"
-                }
-            ],
-            "description": "Declaratively specify how to extract elements from a JSON document",
-            "keywords": [
-                "json",
-                "jsonpath"
-            ],
-            "support": {
-                "issues": "https://github.com/jmespath/jmespath.php/issues",
-                "source": "https://github.com/jmespath/jmespath.php/tree/2.8.0"
-            },
-            "time": "2024-09-04T18:46:31+00:00"
->>>>>>> Stashed changes
         },
         {
             "name": "nesbot/carbon",
@@ -5539,6 +5538,70 @@
             "time": "2025-12-14T04:43:48+00:00"
         },
         {
+            "name": "rize/uri-template",
+            "version": "0.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rize/UriTemplate.git",
+                "reference": "abb53c8b73a5b6c24e11f49036ab842f560cad33"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rize/UriTemplate/zipball/abb53c8b73a5b6c24e11f49036ab842f560cad33",
+                "reference": "abb53c8b73a5b6c24e11f49036ab842f560cad33",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.63",
+                "phpstan/phpstan": "^1.12",
+                "phpunit/phpunit": "~10.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Rize\\": "src/Rize"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marut K",
+                    "homepage": "http://twitter.com/rezigned"
+                }
+            ],
+            "description": "PHP URI Template (RFC 6570) supports both expansion & extraction",
+            "keywords": [
+                "RFC 6570",
+                "template",
+                "uri"
+            ],
+            "support": {
+                "issues": "https://github.com/rize/UriTemplate/issues",
+                "source": "https://github.com/rize/UriTemplate/tree/0.4.1"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/rezigned",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/rezigned",
+                    "type": "github"
+                },
+                {
+                    "url": "https://opencollective.com/rize-uri-template",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2025-12-02T15:19:04+00:00"
+        },
+        {
             "name": "setasign/fpdi",
             "version": "v2.6.4",
             "source": {
@@ -5609,70 +5672,6 @@
                 }
             ],
             "time": "2025-08-05T09:57:14+00:00"
-        },
-        {
-            "name": "rize/uri-template",
-            "version": "0.4.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/rize/UriTemplate.git",
-                "reference": "abb53c8b73a5b6c24e11f49036ab842f560cad33"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/rize/UriTemplate/zipball/abb53c8b73a5b6c24e11f49036ab842f560cad33",
-                "reference": "abb53c8b73a5b6c24e11f49036ab842f560cad33",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.1"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.63",
-                "phpstan/phpstan": "^1.12",
-                "phpunit/phpunit": "~10.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Rize\\": "src/Rize"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Marut K",
-                    "homepage": "http://twitter.com/rezigned"
-                }
-            ],
-            "description": "PHP URI Template (RFC 6570) supports both expansion & extraction",
-            "keywords": [
-                "RFC 6570",
-                "template",
-                "uri"
-            ],
-            "support": {
-                "issues": "https://github.com/rize/UriTemplate/issues",
-                "source": "https://github.com/rize/UriTemplate/tree/0.4.1"
-            },
-            "funding": [
-                {
-                    "url": "https://www.paypal.me/rezigned",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/rezigned",
-                    "type": "github"
-                },
-                {
-                    "url": "https://opencollective.com/rize-uri-template",
-                    "type": "open_collective"
-                }
-            ],
-            "time": "2025-12-02T15:19:04+00:00"
         },
         {
             "name": "stripe/stripe-php",

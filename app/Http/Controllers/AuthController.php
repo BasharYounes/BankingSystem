@@ -2,84 +2,159 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Events\UserRegistered;
+use App\Exceptions\InvalidCodeException;
+use App\Http\Requests\EmailAndCodeRequest;
+use App\Http\Requests\EmailRequest;
+use App\Http\Requests\LoginRequest;
+use App\Repositories\UserRepository;
+use App\Services\CasheService;
 use Illuminate\Http\Request;
+use App\Http\Requests\RegisterRequest;
+use App\Services\AuthService;
+use App\Services\GenerateCode;
+
+
 
 class AuthController extends Controller
 {
-    // Methods for user authentication (login, register, logout) would go here
 
-    public function register(Request $request)
+    public function __construct(
+        protected AuthService $authService,
+        protected GenerateCode $codeService,
+        protected UserRepository $userRepository,
+        protected CasheService $casheService,
+    ) {}
+
+    /**
+     * Register new user and send verification code
+     *
+     * @param RegisterRequest $registerRequest
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function RegisterUser(RegisterRequest $registerRequest)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        $user = $this->authService->registerUser($registerRequest);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'role' => 'customer',
-        ]);
+        $code = $this->codeService->generateCode($user);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        event(new UserRegistered($user, $code));
 
-        return response()->json([
-            'success' => true,
-            'message' => 'تم إنشاء المستخدم بنجاح',
-            // 'user' => $user,
-            'token' => $token,
-        ], 201);
+        return response()->json(['success' => 'تم إرسال كود التحقق' ]);
     }
 
-    public function login(Request $request)
+    /**
+     * Authenticate user and send verification code
+     *
+     * @param LoginRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function login(LoginRequest $request)
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
 
-        $user = User::where('email', $request->email)->firstOrFail();
+        $user = $this->userRepository->findByEmail($request->email);
 
-        if (!$user || !password_verify($request->password, $user->password)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'بيانات الدخول غير صحيحة',
-            ], 401);
+        $this->authService->checkPassword($request->password, $user->password);
+
+        $code = $this->codeService->generateCode($user);
+
+        event(new UserRegistered($user, $code));
+
+
+        return response()->json(['success' => 'تم إرسال كود التحقق']);
+    }
+
+    /**
+     * Resend verification code to user's email
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function ResendCode(EmailRequest $request)
+    {
+
+        $user = $this->userRepository->findByEmail($request->email);
+
+        $code = $this->codeService->generateCode($user);
+
+        event(new UserRegistered($user, $code));
+
+        return response()->json(['success' => 'تم إرسال كود التحقق']);
+    }
+
+    /**
+     * Verify user's code and activate account
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function verifyCode(EmailAndCodeRequest $request)
+    {
+
+        $user = $this->userRepository->findByEmail($request->email);
+
+        $storedCode = $this->casheService->getCodeFromCashe($user);
+
+        if (!$storedCode || $storedCode != $request->code) {
+            throw new InvalidCodeException();
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $this->userRepository->update($user, ['email_verified_at' => now()]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'تم تسجيل الدخول بنجاح',
-            // 'user' => $user,
-            'token' => $token,
-        ]);
+        $this->casheService->forgetCodeFromCashe($user);
+
+        $this->userRepository->deleteUserToken($user);
+
+        $token = $this->userRepository->createToken($user);
+
+        return response()->json(['success' => 'تم تفعيل الحساب بنجاح', 'token' => $token]);
     }
 
-    public function logout(Request $request)
+    /**
+     * Refresh authentication token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function refreshToken()
     {
-        $request->user()->tokens()->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'تم تسجيل الخروج بنجاح',
-        ]);
+        $user = auth()->user();
+
+        $this->userRepository->deleteUserToken($user);
+
+        $newToken = $this->userRepository->createToken($user);
+
+        return response()->json(['success' => 'تم تحديث التوكن بنجاح', 'token' => $newToken]);
     }
+
+    public function logout()
+    {
+        $user = auth()->user();
+        // dd($user);
+        $this->userRepository->deleteUserToken($user);
+        return response()->json(['success' => 'تم تسجيل الخروج بنجاح']);
+    }
+
+
 
     public function storeFCM_Token(Request $request)
     {
         $request->validate([
-            'fcm_token' => 'required|string',
+            'fcm_token' => 'required|string'
         ]);
 
-       $storeFCM_Token = auth()->user()->storeFCM_Token($request->fcm_token) ? true : false;
+        $this->authService->storeFCM(auth()->user(),$request->input('fcm_token'));
 
-        return response()->json([
-            'result' => $storeFCM_Token
-        ]);
+        return response()->json(['success' => 'تم حفظ التوكن بنجاح']);
     }
 }

@@ -177,4 +177,22 @@ class AdminController extends Controller
             'excel_url' => $url
         ]);
     }
+
+    public function getDailyTransaction()
+    {
+        $transactions = $this->transactionProcessor->getDailyTransactions();
+
+        return response()->json([
+            'transactions' => $transactions
+        ]);
+    }
+
+    public function downloadDailyReportPdf() // donlowd
+    {
+        $url = $this->transactionProcessor->getDailyTransactions();
+
+        return response()->json([
+            'pdf_url' => $url
+        ]);
+    }
 }

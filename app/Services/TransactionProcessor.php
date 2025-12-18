@@ -7,16 +7,17 @@ use App\Models\AccountModel;
 use App\Models\Transaction;
 use App\Models\TransactionRecord;
 use App\Services\Recommendations\RecommendationService;
-use Maatwebsite\Excel\Excel;
+// use Maatwebsite\Excel\Excel;
 use Mpdf\Mpdf;
+use Vtiful\Kernel\Excel;
 
 class TransactionProcessor
 {
     private TransactionStrategy $strategy;
     private TransactionHandler $handlerChain;
-    protected \Vtiful\Kernel\Excel $excel;
+    protected Excel $excel;
 
-    public function __construct(\Vtiful\Kernel\Excel $excel)
+    public function __construct(Excel $excel)
     {
         // الاستراتيجية الافتراضية
         $this->strategy = new StandardTransactionStrategy();
@@ -56,7 +57,7 @@ class TransactionProcessor
 
             // معالجة آمنة للتوصيات
             try {
-                $account = AccountModel::find($transaction->from_account_id);
+                $account = AccountModel::findOrFail($transaction->from_account_id);
                 if ($account) {
                     app(RecommendationService::class)->generate($account);
                 }
