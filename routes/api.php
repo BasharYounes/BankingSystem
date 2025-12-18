@@ -44,12 +44,11 @@ use Illuminate\Support\Facades\Route;
     {
         Route::post('/logout', [AdminController::class, 'logout']);
         Route::get('users', [AdminController::class, 'getUsers']);
-          });
-
-        Route::get('admin/daily/transactions', [AdminController::class, 'getDailyTransactions']);
-        Route::get('admin/dailyReport/Pdf', [AdminController::class, 'downloadDailyReport']);
-        Route::get('admin/dailyReport/Excel', [AdminController::class, 'downloadDailyReportExcel']);
-
+        Route::get('daily/transactions', [AdminController::class, 'getDailyTransactions']);
+        Route::get('dailyReport/Pdf', [AdminController::class, 'downloadDailyReport']);
+        Route::get('dailyReport/Excel', [AdminController::class, 'downloadDailyReportExcel']);
+    
+    });
 
 
 
