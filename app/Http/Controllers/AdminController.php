@@ -107,6 +107,7 @@ class AdminController extends Controller
         ]);
     }
 
+
     public function getTicket()
     {
         $policy = new AccountPolicy();
