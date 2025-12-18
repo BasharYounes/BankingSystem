@@ -14,9 +14,9 @@ class TransactionProcessor
 {
     private TransactionStrategy $strategy;
     private TransactionHandler $handlerChain;
-    protected Excel $excel;
+    protected \Vtiful\Kernel\Excel $excel;
 
-    public function __construct(Excel $excel)
+    public function __construct(\Vtiful\Kernel\Excel $excel)
     {
         // الاستراتيجية الافتراضية
         $this->strategy = new StandardTransactionStrategy();
@@ -26,7 +26,7 @@ class TransactionProcessor
         $this->excel = $excel;
     }
 
-    
+
     private function buildHandlerChain(): void
     {
         $validationHandler = new ValidationHandler();
