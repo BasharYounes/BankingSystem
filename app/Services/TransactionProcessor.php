@@ -15,16 +15,12 @@ class TransactionProcessor
 {
     private TransactionStrategy $strategy;
     private TransactionHandler $handlerChain;
-    protected Excel $excel;
 
-    public function __construct(Excel $excel)
+    public function __construct()
     {
-        // الاستراتيجية الافتراضية
         $this->strategy = new StandardTransactionStrategy();
 
-        // بناء سلسلة المسؤولية
         $this->buildHandlerChain();
-        $this->excel = $excel;
     }
 
 
@@ -39,31 +35,32 @@ class TransactionProcessor
 
     public function process(Transaction $transaction): array
     {
-        try {
-            // 1. التحقق من الصحة عبر Chain of Responsibility
-            $isValid = $this->handlerChain->handle($transaction);
+            try {
+            if (!$this->handlerChain) {
+                throw new \LogicException('Handler chain not set');
+            }
 
-            if (!$isValid) {
+            if (!$this->strategy) {
+                throw new \LogicException('Strategy not set');
+            }
+
+            if (!$this->handlerChain->handle($transaction)) {
                 return [
                     'success' => false,
-                    'message' => 'فشل التحقق من المعاملة',
-                    'status' => $transaction->status,
+                    'reason' => 'validation_failed',
                 ];
             }
 
-            $this->strategy->process($transaction);
 
-            $result = $transaction->execute();
+                $this->strategy->process($transaction);
 
-            // معالجة آمنة للتوصيات
-            try {
+                $result = $transaction->execute();
+
                 $account = AccountModel::findOrFail($transaction->from_account_id);
+
                 if ($account) {
                     app(RecommendationService::class)->generate($account);
                 }
-            } catch (\Exception $e) {
-                \Log::warning('تحذير في إنشاء التوصيات: ' . $e->getMessage());
-            }
 
             if ($result) {
                 return [
@@ -94,50 +91,9 @@ class TransactionProcessor
         $this->strategy = $strategy;
     }
 
-    public function getDailyTransactions()
-{
-    $today = now()->format('Y-m-d');
-
-    $transactions= TransactionRecord::with(['account','fromAccount','toAccount','customer','approver'])->get();
-
-
-    return $transactions;
-}
-public function generateDailyTransactionsPdf()
-{
-     $transactions = $this->getDailyTransactions();
-    $date = now()->format('Y-m-d');
-
-    $html = view('Reports.daily_transactions_pdf', [
-        'transactions' => $transactions,
-        'date' => $date
-    ])->render();
-
-    $mpdf = new Mpdf(['default_font' => 'dejavusans']);
-    $mpdf->WriteHTML($html);
-
-    $fileName = "daily_transactions_{$date}.pdf";
-    $url = asset('storage/reports/' . $fileName);
-
-    $mpdf->Output(
-        storage_path('app/public/reports/' . $fileName),
-        'F'
-    );
-
-    return $url;
-}
-
-      public function generateDailyTransactionsExcel()
+    public function setHandlerChain(TransactionHandler $handlerChain): void
     {
-        $transactions = $this->getDailyTransactions();
-        $date = now()->format('Y-m-d');
-
-        $fileName = "daily_transactions_{$date}.xlsx";
-        $path = "public/reports/{$fileName}";
-
-        // استخدمي الكائن بدل الاستاتيك
-        $this->excel->store(new DailyTransactionsExport($transactions), $path);
-
-        return asset('storage/reports/' . $fileName);
+        $this->handlerChain = $handlerChain;
     }
+
 }

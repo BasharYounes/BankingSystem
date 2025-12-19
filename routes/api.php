@@ -8,8 +8,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register',[AuthController::class,'RegisterUser']);
+    Route::post('/login',[AuthController::class,'login'])->middleware('throttle:5,1');
+    Route::post('/verify-code',[AuthController::class,'VerifyCode']);
+    Route::post('/resend-code',[AuthController::class,'ResendCode'])->middleware('throttle:3,10');
 
     Route::post('/register-admin', [AdminController::class, 'register']);
     Route::post('/login-admin', [AdminController::class, 'login']);

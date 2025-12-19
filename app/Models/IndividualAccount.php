@@ -23,6 +23,5 @@ abstract class IndividualAccount extends BaseAccount
     {
         return $this->getAvailableBalance() >= $amount;
     }
-
     
 }

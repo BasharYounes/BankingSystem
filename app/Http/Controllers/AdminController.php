@@ -6,6 +6,7 @@ use App\Models\AccountModel;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Policies\AccountPolicy;
+use App\Services\ReportService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,10 +20,8 @@ class AdminController extends Controller
 
     protected $transactionProcessor;
 
-    public function __construct(TransactionProcessor $transactionProcessor)
-    {
-        $this->transactionProcessor = $transactionProcessor;
-    }
+    public function __construct(protected ReportService $reportService)
+    {}
 
 
     public function register(Request $request)
@@ -172,7 +171,7 @@ class AdminController extends Controller
 
     public function downloadDailyReportExcel()
     {
-        $url = $this->transactionProcessor->generateDailyTransactionsExcel();
+        $url = $this->reportService->generateDailyTransactionsExcel();
 
         return response()->json([
             'excel_url' => $url
@@ -181,7 +180,7 @@ class AdminController extends Controller
 
     public function getDailyTransaction()
     {
-        $transactions = $this->transactionProcessor->getDailyTransactions();
+        $transactions = $this->reportService->getDailyTransactions();
 
         return response()->json([
             'transactions' => $transactions
@@ -190,7 +189,7 @@ class AdminController extends Controller
 
     public function downloadDailyReportPdf() // donlowd
     {
-        $url = $this->transactionProcessor->getDailyTransactions();
+        $url = $this->reportService->getDailyTransactions();
 
         return response()->json([
             'pdf_url' => $url
