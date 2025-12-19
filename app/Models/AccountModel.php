@@ -84,8 +84,12 @@ class AccountModel extends Model implements Subject
 
     public function transactions()
     {
-        // NOTE: Transaction is abstract (domain behavior). Use a concrete model for Eloquent relations.
         return $this->hasMany(TransactionRecord::class, 'account_id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
     // ===========================
     // ✅ نمط المراقب (Observer Pattern)

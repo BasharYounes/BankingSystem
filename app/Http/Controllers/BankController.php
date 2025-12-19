@@ -45,13 +45,13 @@ class BankController extends Controller
     public function deposit(Request $request)
     {
         $request->validate([
-            'account_id' => 'required|exists:accounts,id',
+            'account_number' => 'required|exists:accounts,account_number',
             'amount' => 'required|numeric|min:0.01',
             'description' => 'nullable|string',
         ]);
 
         $user = Auth::user();
-        $account = AccountModel::where('id', $request->account_id)->firstOrFail();
+        $account = AccountModel::where('account_number', $request->account_number)->firstOrFail();
 
         if (!$account) {
             return response()->json(['error' => 'الحساب غير موجود'], 404);
@@ -73,13 +73,13 @@ class BankController extends Controller
     public function withdrawal(Request $request)
     {
         $request->validate([
-            'account_id' => 'required|exists:accounts,id',
+            'account_number' => 'required|exists:accounts,account_number',
             'amount' => 'required|numeric|min:0.01',
             'description' => 'nullable|string',
         ]);
 
         $user = Auth::user();
-        $account = AccountModel::where('id', $request->account_id)->firstOrFail();
+        $account = AccountModel::where('account_number', $request->account_number)->firstOrFail();
 
         if (!$account) {
             return response()->json(['error' => 'الحساب غير موجود'], 404);

@@ -7,7 +7,7 @@ use App\Exceptions\InvalidCodeException;
 use App\Http\Requests\EmailAndCodeRequest;
 use App\Http\Requests\EmailRequest;
 use App\Http\Requests\LoginRequest;
-use App\Repositories\UserRepository;
+use App\Repositoreis\UserRepository;
 use App\Services\CasheService;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;

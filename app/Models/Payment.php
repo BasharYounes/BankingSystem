@@ -23,4 +23,9 @@ class Payment extends Model
     {
         return $this->belongsTo(Payment_method::class);
     }
+
+    public function account()
+    {
+        $this->belongsTo(AccountModel::class);
+    }
 }

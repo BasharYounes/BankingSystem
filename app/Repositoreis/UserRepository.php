@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositoreis;
 
 use App\Models\PasswordResetToken;
 use App\Models\User;
