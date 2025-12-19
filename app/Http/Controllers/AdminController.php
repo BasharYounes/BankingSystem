@@ -7,6 +7,7 @@ use App\Models\Ticket;
 use App\Models\User;
 use App\Policies\AccountPolicy;
 use App\Services\ReportService;
+use Hash;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +31,7 @@ class AdminController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
+            'role' => 'admin'
         ]);
 
         $admin = User::create([
@@ -50,13 +52,13 @@ class AdminController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'email' => 'required|email|exists:users',
             'password' => 'required',
         ]);
 
         $admin = User::where('email', $request->email)->first();
 
-        if (!$admin || !password_verify($request->password, $admin->password)) {
+        if (!$admin || !Hash::check($request->password, $admin->password)) {
             $token = $admin->createToken('auth_token')->plainTextToken;
             return response()->json([
                 'message' => 'Admin logged in successfully',

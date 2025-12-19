@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Interfaces\TransactionContract;
 
 /**
  * Concrete Eloquent model for reading/querying the `transactions` table.
@@ -71,10 +72,10 @@ class TransactionRecord extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    public function approver()
-{
-    return $this->belongsTo(User::class, 'approved_by');
-}
+        public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
 
 }
 

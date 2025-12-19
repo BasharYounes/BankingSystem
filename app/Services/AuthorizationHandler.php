@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Interfaces\TransactionContract;
 use App\Models\Transaction;
 
 class AuthorizationHandler implements TransactionHandler
@@ -15,12 +16,13 @@ class AuthorizationHandler implements TransactionHandler
         return $handler;
     }
 
-    public function handle(Transaction $transaction): bool
+    public function handle(TransactionContract $transaction): bool
     {
         // التحقق من الحاجة إلى موافقة
         if ($this->requiresApproval($transaction)) {
-            $transaction->status = 'requires_approval';
-            $transaction->save();
+            $transaction->setStatus('requires_approval');
+            // $transaction->status = 'requires_approval';
+            // $transaction->save();
             return false; // تحتاج موافقة
         }
 
@@ -32,17 +34,17 @@ class AuthorizationHandler implements TransactionHandler
         return true;
     }
 
-    private function requiresApproval(Transaction $transaction): bool
+    private function requiresApproval(TransactionContract $transaction): bool
     {
         // معاملات كبيرة تحتاج موافقة
-        if ($transaction->amount > $this->approvalLimit) {
+        if ($transaction->getAmount() > $this->approvalLimit) {
             return true;
         }
 
-        // تحويلات بين حسابات مختلفة الملاك
-        if ($transaction->type === 'transfer') {
-            // يمكن إضافة منطق التحقق هنا
-        }
+        // // تحويلات بين حسابات مختلفة الملاك
+        // if ($transaction->getType() === 'transfer') {
+        //     // يمكن إضافة منطق التحقق هنا
+        // }
 
         return false;
     }

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\AccountModel;
 use App\Models\Customer;
 use App\Models\Account;
+use App\Policies\AccountPolicy;
 use App\Services\BankService;
+use App\Services\Recommendations\RecommendationService;
 use App\Strategies\CompositeAccountStrategy;
 use App\Rules\CompositeAccountRule;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -56,8 +58,10 @@ class BankController extends Controller
         if (!$account) {
             return response()->json(['error' => 'الحساب غير موجود'], 404);
         }
-
-        $this->authorize('deposit', $account);
+        $policy = new AccountPolicy();
+        if (!$policy->deposit(auth()->user(),$account)) {
+            abort(403, 'This action is unauthorized.');
+        }
 
         $transaction = $user->requestDeposit(
             $account,
@@ -66,6 +70,8 @@ class BankController extends Controller
         );
 
         $result = $this->bankService->processTransaction($transaction);
+
+        app(RecommendationService::class)->generate($account);
 
         return response()->json($result);
     }
@@ -84,8 +90,10 @@ class BankController extends Controller
         if (!$account) {
             return response()->json(['error' => 'الحساب غير موجود'], 404);
         }
-
-        $this->authorize('withdraw', $account);
+        $policy = new AccountPolicy();
+        if (!$policy->withdraw(auth()->user(),$account)) {
+            abort(403, 'This action is unauthorized.');
+        }
 
         $transaction = $user->requestWithdrawal(
             $account,
@@ -93,6 +101,8 @@ class BankController extends Controller
             $request->description ?? 'إيداع نقدي'
         );
         $result = $this->bankService->processTransaction($transaction);
+
+        app(RecommendationService::class)->generate($account);
 
         return response()->json([
             'result'=>$result,

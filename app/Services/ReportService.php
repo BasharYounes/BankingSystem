@@ -6,11 +6,11 @@ use App\Exports\DailyTransactionsExport;
 use App\Models\Transaction;
 use App\Models\TransactionRecord;
 use Mpdf\Mpdf;
-use Vtiful\Kernel\Excel;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportService
 {
-    public function __construct(protected Excel $excel)
+    public function __construct()
     {
 
     }
@@ -57,7 +57,7 @@ class ReportService
         $path = "public/reports/{$fileName}";
 
         // استخدمي الكائن بدل الاستاتيك
-        $this->excel->store(new DailyTransactionsExport($transactions), $path);
+        Excel::store(new DailyTransactionsExport($transactions), $path);
 
         return asset('storage/reports/' . $fileName);
     }

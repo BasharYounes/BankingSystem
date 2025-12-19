@@ -2,28 +2,31 @@
 
 namespace App\Services;
 
+use App\Interfaces\TransactionContract;
 use App\Models\Transaction;
 
 class StandardTransactionStrategy implements TransactionStrategy
 {
-    public function process(Transaction $transaction): void
+    public function process(TransactionContract $transaction): void
     {
         // رسوم ثابتة للمعاملات العادية
         $fees = $this->calculateFees($transaction);
 
-        if ($transaction->amount > 0) {
+        if ($transaction->getAmount() > 0) {
             // يمكن تخزين الرسوم في قاعدة البيانات
-            \Log::info("رسوم المعاملة: {$fees} للمعاملة {$transaction->transaction_id}");
+            \Log::info("رسوم المعاملة: {$fees} للمعاملة {$transaction->getTransactionId()}");
         }
+
+        // store fees in account bank...
     }
 
-    public function calculateFees(Transaction $transaction): float
+    public function calculateFees(TransactionContract $transaction): float
     {
         $baseFee = 0;
 
-        switch ($transaction->type) {
+        switch ($transaction->getType()) {
             case 'deposit':
-                $baseFee = 0; 
+                $baseFee = 0;
                 break;
             case 'withdraw':
                 $baseFee = 2;
@@ -34,7 +37,7 @@ class StandardTransactionStrategy implements TransactionStrategy
         }
 
         // نسبة من المبلغ
-        $percentageFee = $transaction->amount * 0.01; // 1%
+        $percentageFee = $transaction->getAmount() * 0.01; // 1%
 
         return $baseFee + $percentageFee;
     }

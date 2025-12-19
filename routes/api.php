@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,9 @@ use Illuminate\Support\Facades\Route;
             Route::post('open-ticket', [TicketController::class, 'store']);
             Route::post('add-message/{ticketId}', [TicketController::class, 'addMessage']);
             Route::post('update-status/{ticketId}', [TicketController::class, 'updateStatus']);
+
+            Route::get('user-notifications', [UserController::class, 'getUserNotifications']);
+            Route::get('get-children', [UserController::class, 'getChildren']);
         }
     );
 

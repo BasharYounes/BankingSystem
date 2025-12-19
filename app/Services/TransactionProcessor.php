@@ -3,13 +3,12 @@
 namespace App\Services;
 
 use App\Exports\DailyTransactionsExport;
+use App\Interfaces\TransactionContract;
 use App\Models\AccountModel;
 use App\Models\Transaction;
 use App\Models\TransactionRecord;
 use App\Services\Recommendations\RecommendationService;
-// use Maatwebsite\Excel\Excel;
 use Mpdf\Mpdf;
-use Vtiful\Kernel\Excel;
 
 class TransactionProcessor
 {
@@ -33,7 +32,7 @@ class TransactionProcessor
         $this->handlerChain = $validationHandler;
     }
 
-    public function process(Transaction $transaction): array
+    public function process(TransactionContract $transaction): array
     {
             try {
             if (!$this->handlerChain) {
@@ -56,32 +55,39 @@ class TransactionProcessor
 
                 $result = $transaction->execute();
 
-                $account = AccountModel::findOrFail($transaction->from_account_id);
+                // if (!$transaction->getFromAccountId()) {
+                //      return [];
+                // }
 
-                if ($account) {
-                    app(RecommendationService::class)->generate($account);
-                }
+                // $account = AccountModel::find($transaction->getFromAccountId());
+
+                // if ($account) {
+                //     app(RecommendationService::class)->generate($account);
+                // }
 
             if ($result) {
                 return [
                     'success' => true,
                     'message' => 'تمت المعاملة بنجاح',
-                    'transaction_id' => $transaction->transaction_id,
-                    'amount' => $transaction->amount,
+                    'transaction_id' => $transaction->getTransactionId(),
+                    'amount' => $transaction->getAmount(),
                 ];
             } else {
                 return [
                     'success' => false,
                     'message' => 'فشل تنفيذ المعاملة',
-                    'transaction_id' => $transaction->transaction_id,
+                    'transaction_id' => $transaction->getTransactionId(),
                 ];
             }
 
-        } catch (\Exception $e) {
+        } catch (\LogicException $e) {
+            throw $e;
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
-                'message' => $e->getMessage().' خطأ في معالجة المعاملة',
-                'transaction_id' => $transaction->transaction_id,
+                'reason' => 'strategy_failed',
+                'message' => $e->getMessage(),
+                'transaction_id' => $transaction->getTransactionId(),
             ];
         }
     }

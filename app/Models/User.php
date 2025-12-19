@@ -54,6 +54,11 @@ class User extends Authenticatable
         return $this->hasMany(AccountModel::class);
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
     public function openAccount(string $type, array $data = [])
     {
         $accountNumber = $this->generateAccountNumber($type);

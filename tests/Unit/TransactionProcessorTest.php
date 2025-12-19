@@ -2,13 +2,14 @@
 
 namespace Tests\Unit;
 
+use App\Interfaces\TransactionContract;
+use App\Models\Transaction;
 use App\Models\TransactionRecord;
 use App\Services\StandardTransactionStrategy;
 use App\Services\TransactionHandler;
 use App\Services\TransactionProcessor;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Vtiful\Kernel\Excel;
 
 class TransactionProcessorTest extends TestCase
 {
@@ -18,11 +19,17 @@ class TransactionProcessorTest extends TestCase
     // ************  -{ TC1 }-  **************
     public function test_successful_transaction_is_processed(): void
     {
-        $transaction = Mockery::mock(TransactionRecord::class);
+        $transaction = Mockery::mock(TransactionContract::class);
 
         $transaction->shouldReceive('execute')
         ->once()
         ->andReturn(true);
+
+        $transaction->shouldReceive('getTransactionId')
+        ->andReturn('TXN-TEST-1');
+
+        $transaction->shouldReceive('getAmount')
+        ->andReturn(1000);
 
         $handler = Mockery::mock(TransactionHandler::class);
 
@@ -52,7 +59,8 @@ class TransactionProcessorTest extends TestCase
     // ************  -{ TC2 }-  **************
     public function test_transaction_fails_when_validation_fails(): void
     {
-        $transaction = Mockery::mock(TransactionRecord::class);
+
+        $transaction = Mockery::mock(TransactionContract::class);
 
         $transaction->shouldNotReceive('execute');
 
@@ -82,9 +90,13 @@ class TransactionProcessorTest extends TestCase
     // ************  -{ TC3 }-  **************
     public function test_transaction_fails_when_strategy_throws_exception(): void
     {
-        $transaction = Mockery::mock(TransactionRecord::class);
+        $transaction = Mockery::mock(TransactionContract::class);
 
         $transaction->shouldNotReceive('execute');
+
+        $transaction->shouldReceive('getTransactionId')
+        ->andReturn('TXN-FAIL-1');
+
 
         $handler = Mockery::mock(TransactionHandler::class);
 
@@ -116,11 +128,14 @@ class TransactionProcessorTest extends TestCase
     // ************  -{ TC4 }-  **************
     public function test_transaction_fails_when_execute_returns_false(): void
     {
-        $transaction = Mockery::mock(TransactionRecord::class);
+        $transaction = Mockery::mock(TransactionContract::class);
 
         $transaction->shouldReceive('execute')
             ->once()
             ->andReturn(false);
+
+        $transaction->shouldReceive('getTransactionId')
+            ->andReturn('TXN-FAIL-2');
 
         $handler = Mockery::mock(TransactionHandler::class);
         $handler->shouldReceive('handle')
@@ -147,7 +162,7 @@ class TransactionProcessorTest extends TestCase
     {
         $this->expectException(\LogicException::class);
 
-        $transaction = Mockery::mock(TransactionRecord::class);
+        $transaction = Mockery::mock(TransactionContract::class);
 
         $handler = Mockery::mock(TransactionHandler::class);
         $handler->shouldReceive('handle')->andReturn(true);
@@ -163,7 +178,7 @@ class TransactionProcessorTest extends TestCase
     {
         $this->expectException(\LogicException::class);
 
-        $transaction = Mockery::mock(TransactionRecord::class);
+        $transaction = Mockery::mock(TransactionContract::class);
 
         $strategy = Mockery::mock(StandardTransactionStrategy::class);
 

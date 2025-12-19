@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use App\Interfaces\Account;
+use App\Interfaces\TransactionContract;
 use Illuminate\Database\Eloquent\Model;
 
-abstract class Transaction extends TransactionRecord
+abstract class Transaction extends TransactionRecord implements TransactionContract
 {
     protected $table = 'transactions';
 
@@ -89,7 +90,7 @@ abstract class Transaction extends TransactionRecord
         return true;
     }
 
-    protected function setStatus(string $status): void
+    public function setStatus(string $status): void
     {
         $this->status = $status;
         $this->save();
@@ -123,5 +124,25 @@ abstract class Transaction extends TransactionRecord
     public function approver()
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function getFromAccountId(): ?int
+    {
+        return $this->from_account_id;
+    }
+
+    public function getTransactionId(): string
+    {
+        return $this->id;
+    }
+
+    public function getAmount(): float
+    {
+        return (float) $this->amount;
+    }
+
+    public function getType():string
+    {
+        return $this->type;
     }
 }

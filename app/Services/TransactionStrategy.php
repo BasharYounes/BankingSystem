@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Transaction;
-
+use App\Interfaces\TransactionContract;
 interface TransactionStrategy
 {
-    public function process(Transaction $transaction): void;
-    public function calculateFees(Transaction $transaction): float;
+    public function process(TransactionContract $transaction): void;
+    public function calculateFees(TransactionContract $transaction): float;
 }
